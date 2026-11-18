@@ -3,6 +3,37 @@ import { expect, it } from "vitest";
 import { cloneEnvWithPlatformSemantics } from "../config-env-vars.js";
 import { createSessionHistoryWorkerReaders } from "./session-transcript-worker-readers.js";
 
+it("labels lifecycle artifact planning for worker timing diagnostics", async () => {
+  const signal = new AbortController().signal;
+  let diagnosticOperation: string | undefined;
+  const readers = createSessionHistoryWorkerReaders(
+    async (
+      prepare,
+      _inputBytes,
+      receive,
+      receivedSignal,
+      _onRequest,
+      _timeoutMs,
+      operation,
+    ) => {
+      expect(prepare()).toMatchObject({ kind: "lifecycle-artifact-plan" });
+      expect(receivedSignal).toBe(signal);
+      diagnosticOperation = operation;
+      return receive({
+        kind: "lifecycle-artifact-plan",
+        plan: { entries: [], deletePlans: [] },
+        diagnostics: {},
+      });
+    },
+  );
+
+  await expect(readers.readLifecycleArtifactPlan({} as never, signal)).resolves.toMatchObject({
+    kind: "lifecycle-artifact-plan",
+    plan: { entries: [], deletePlans: [] },
+  });
+  expect(diagnosticOperation).toBe("session.lifecycle.artifacts-prepare");
+});
+
 it("preserves the direct read request, signal, and projected result", async () => {
   const input = { scope: { agentId: "main", sessionId: "synthetic-session" } };
   const signal = new AbortController().signal;
