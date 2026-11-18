@@ -29,10 +29,12 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
     },
   );
 
-  await expect(readers.readLifecycleArtifactPlan(
-    {} as Parameters<SessionHistoryWorkerDatabase["readLifecycleArtifactPlan"]>[0],
-    signal,
-  )).resolves.toMatchObject({
+  await expect(
+    readers.readLifecycleArtifactPlan(
+      {} as Parameters<SessionHistoryWorkerDatabase["readLifecycleArtifactPlan"]>[0],
+      signal,
+    ),
+  ).resolves.toMatchObject({
     kind: "lifecycle-artifact-plan",
     plan: { entries: [], deletePlans: [] },
   });
