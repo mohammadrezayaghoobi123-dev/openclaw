@@ -21,6 +21,7 @@ export type SessionHistoryWorkerRequestRunner = <TResult>(
   signal?: AbortSignal,
   onRequest?: (value: unknown, signal: AbortSignal) => void | Promise<WorkerTaskResponse>,
   timeoutMs?: number,
+  diagnosticOperation?: string,
 ) => Promise<TResult>;
 
 type SessionHistoryWorkerValue = SessionTranscriptWorkerValues[SessionHistoryWorkerInput["kind"]];
@@ -155,11 +156,19 @@ export function createSessionHistoryWorkerReaders(
       "pending archives",
       (value) => value.pending,
     ),
-    readLifecycleArtifactPlan: reader(
-      "lifecycle-artifact-plan",
-      "lifecycle artifact plan",
-      (value) => value,
-    ),
+    readLifecycleArtifactPlan: (input, signal) =>
+      runRequest(
+        () => ({ kind: "lifecycle-artifact-plan", ...input }),
+        JSON.stringify(input).length * 2,
+        (value) => {
+          assertResultKind(value, "lifecycle-artifact-plan", "lifecycle artifact plan");
+          return value;
+        },
+        signal,
+        undefined,
+        undefined,
+        "session.lifecycle.artifacts-prepare",
+      ),
     readMemorySessionTargets: reader(
       "memory-session-targets",
       "memory session targets",
