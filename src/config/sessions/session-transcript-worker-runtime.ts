@@ -256,8 +256,8 @@ export function retainSessionHistoryWorkerDatabase(
       receive,
       signal,
       onRequest,
-      timeoutMs = 60_000,
       diagnosticOperation,
+      timeoutMs = 60_000,
     ) => {
       assertCurrent();
       const validation = captureOpenClawAgentDatabaseReadValidation(database);
