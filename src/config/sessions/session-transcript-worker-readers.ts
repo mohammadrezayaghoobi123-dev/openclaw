@@ -20,8 +20,8 @@ export type SessionHistoryWorkerRequestRunner = <TResult>(
   receive: (value: SessionTranscriptWorkerValues[SessionHistoryWorkerInput["kind"]]) => TResult,
   signal?: AbortSignal,
   onRequest?: (value: unknown, signal: AbortSignal) => void | Promise<WorkerTaskResponse>,
-  timeoutMs?: number,
   diagnosticOperation?: string,
+  timeoutMs?: number,
 ) => Promise<TResult>;
 
 type SessionHistoryWorkerValue = SessionTranscriptWorkerValues[SessionHistoryWorkerInput["kind"]];
@@ -106,6 +106,7 @@ export function createSessionHistoryWorkerReaders(
         },
         options.signal,
         undefined,
+        undefined,
         options.timeoutMs,
       );
     },
@@ -165,7 +166,6 @@ export function createSessionHistoryWorkerReaders(
           return value;
         },
         signal,
-        undefined,
         undefined,
         "session.lifecycle.artifacts-prepare",
       ),
