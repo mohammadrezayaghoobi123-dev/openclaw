@@ -64,6 +64,8 @@ export type WorkerTaskOptions<Input> = {
   inputBytes?: number;
   /** Queueing, preparation, execution, and host callbacks consume this deadline. */
   timeoutMs?: number;
+  /** Bounded diagnostic label used to attribute this task's queue and execution timings. */
+  diagnosticOperation?: string;
   /** Only callbacks with their own deadline may replace the pool clock during host waits. */
   hostTimeout?: "owner";
   signal?: AbortSignal;
@@ -77,10 +79,8 @@ export type WorkerTaskOptions<Input> = {
 };
 
 /** Internal codecs may answer a worker while their caller cannot run Promise reactions. */
-export type OwnedWorkerTaskOptions<Input> = Omit<WorkerTaskOptions<Input>, "onRequest"> & {
-  /** Host diagnostics classify this operation before publishing bounded labels. */
-  diagnosticOperation?: string;
-} & (
+export type OwnedWorkerTaskOptions<Input> = Omit<WorkerTaskOptions<Input>, "onRequest"> &
+  (
     | { onRequest?: WorkerTaskOptions<Input>["onRequest"]; onRequestSync?: never }
     | {
         onRequest?: never;

@@ -256,6 +256,7 @@ export function retainSessionHistoryWorkerDatabase(
       receive,
       signal,
       onRequest,
+      diagnosticOperation,
       timeoutMs = 60_000,
     ) => {
       assertCurrent();
@@ -295,6 +296,7 @@ export function retainSessionHistoryWorkerDatabase(
                 {
                   inputBytes: inputBytes + (validation?.inputBytes ?? 0),
                   timeoutMs: remaining,
+                  diagnosticOperation,
                   signal: requestSignal,
                   onRequest: onRequest
                     ? (value, context) => {
