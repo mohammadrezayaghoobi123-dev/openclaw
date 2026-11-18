@@ -11,6 +11,7 @@ import type { WorkerRequestKind } from "./worker-request-kind.js";
 export type WorkerRequestObservation = { started(): void; completed(): void };
 
 const requestPrefixes = [
+  ["session.lifecycle.artifacts-prepare", "session_lifecycle_artifacts_prepare"],
   ["pluginState.", "plugin_state"],
   ["session.history.", "transcript_read"],
   ["trajectory.", "transcripts"],
