@@ -7,7 +7,7 @@ import type { SessionHistoryWorkerDatabase } from "./session-transcript-worker.t
 
 it("labels lifecycle artifact planning for worker timing diagnostics", async () => {
   const signal = new AbortController().signal;
-  let diagnosticOperation: string | undefined;
+  let diagnosticOperation = "";
   const readers = createSessionHistoryWorkerReaders(
     async (
       prepare,
@@ -20,7 +20,7 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
     ) => {
       expect(prepare()).toMatchObject({ kind: "lifecycle-artifact-plan" });
       expect(receivedSignal).toBe(signal);
-      diagnosticOperation = operation;
+      diagnosticOperation = operation ?? "";
       return receive({
         kind: "lifecycle-artifact-plan",
         plan: { entries: [], deletePlans: [] },
@@ -29,12 +29,11 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
     },
   );
 
-  await expect(
-    readers.readLifecycleArtifactPlan(
-      {} as Parameters<SessionHistoryWorkerDatabase["readLifecycleArtifactPlan"]>[0],
-      signal,
-    ),
-  ).resolves.toMatchObject({
+  const result = readers.readLifecycleArtifactPlan(
+    {} as Parameters<SessionHistoryWorkerDatabase["readLifecycleArtifactPlan"]>[0],
+    signal,
+  );
+  await expect(result).resolves.toMatchObject({
     kind: "lifecycle-artifact-plan",
     plan: { entries: [], deletePlans: [] },
   });
