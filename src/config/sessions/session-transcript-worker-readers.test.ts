@@ -3,6 +3,7 @@ import { expect, it } from "vitest";
 import { classifyWorkerRequest } from "../../infra/worker-request-diagnostics.js";
 import { cloneEnvWithPlatformSemantics } from "../config-env-vars.js";
 import { createSessionHistoryWorkerReaders } from "./session-transcript-worker-readers.js";
+import type { SessionHistoryWorkerDatabase } from "./session-transcript-worker.types.js";
 
 it("labels lifecycle artifact planning for worker timing diagnostics", async () => {
   const signal = new AbortController().signal;
@@ -28,7 +29,10 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
     },
   );
 
-  await expect(readers.readLifecycleArtifactPlan({} as never, signal)).resolves.toMatchObject({
+  await expect(readers.readLifecycleArtifactPlan(
+    {} as Parameters<SessionHistoryWorkerDatabase["readLifecycleArtifactPlan"]>[0],
+    signal,
+  )).resolves.toMatchObject({
     kind: "lifecycle-artifact-plan",
     plan: { entries: [], deletePlans: [] },
   });
