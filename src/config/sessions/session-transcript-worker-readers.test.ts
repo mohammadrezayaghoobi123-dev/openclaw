@@ -7,7 +7,7 @@ import type { SessionHistoryWorkerDatabase } from "./session-transcript-worker.t
 
 it("labels lifecycle artifact planning for worker timing diagnostics", async () => {
   const signal = new AbortController().signal;
-  let diagnosticOperation = "";
+  let diagnosticOperation: PropertyKey = "";
   const readers = createSessionHistoryWorkerReaders(
     async (prepare, _inputBytes, receive, receivedSignal, _onRequest, _timeoutMs, operation) => {
       expect(prepare()).toMatchObject({ kind: "lifecycle-artifact-plan" });
