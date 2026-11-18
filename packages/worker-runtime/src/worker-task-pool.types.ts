@@ -80,12 +80,12 @@ export type WorkerTaskOptions<Input> = {
 
 /** Internal codecs may answer a worker while their caller cannot run Promise reactions. */
 export type OwnedWorkerTaskOptions<Input> = Omit<WorkerTaskOptions<Input>, "onRequest"> & (
-    | { onRequest?: WorkerTaskOptions<Input>["onRequest"]; onRequestSync?: never }
-    | {
-        onRequest?: never;
-        onRequestSync?: (value: unknown, context: WorkerTaskRequestContext) => WorkerTaskResponse;
-      }
-  );
+  | { onRequest?: WorkerTaskOptions<Input>["onRequest"]; onRequestSync?: never }
+  | {
+      onRequest?: never;
+      onRequestSync?: (value: unknown, context: WorkerTaskRequestContext) => WorkerTaskResponse;
+    }
+);
 
 /** Internal custody: a result alone does not release its slot or notify execution settlement. */
 export type OwnedWorkerTask<Output> = {
