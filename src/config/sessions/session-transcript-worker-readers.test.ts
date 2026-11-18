@@ -1,5 +1,6 @@
 import path from "node:path";
 import { expect, it } from "vitest";
+import { classifyWorkerRequest } from "../../infra/worker-request-diagnostics.js";
 import { cloneEnvWithPlatformSemantics } from "../config-env-vars.js";
 import { createSessionHistoryWorkerReaders } from "./session-transcript-worker-readers.js";
 
@@ -32,6 +33,7 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
     plan: { entries: [], deletePlans: [] },
   });
   expect(diagnosticOperation).toBe("session.lifecycle.artifacts-prepare");
+  expect(classifyWorkerRequest(diagnosticOperation)).toBe("session_lifecycle_artifacts_prepare");
 });
 
 it("preserves the direct read request, signal, and projected result", async () => {
