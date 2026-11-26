@@ -9,7 +9,7 @@ it("labels lifecycle artifact planning for worker timing diagnostics", async () 
   const signal = new AbortController().signal;
   let diagnosticOperation: PropertyKey = "";
   const readers = createSessionHistoryWorkerReaders(
-    async (prepare, _inputBytes, receive, receivedSignal, _onRequest, _timeoutMs, operation) => {
+    async (prepare, _inputBytes, receive, receivedSignal, _onRequest, operation, _timeoutMs) => {
       expect(prepare()).toMatchObject({ kind: "lifecycle-artifact-plan" });
       expect(receivedSignal).toBe(signal);
       diagnosticOperation = operation ?? "";
