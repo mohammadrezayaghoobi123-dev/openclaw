@@ -27,6 +27,29 @@ import {
 } from "./session-transcript-worker-runtime.js";
 import type { SessionHistoryWorkerDatabase } from "./session-transcript-worker.types.js";
 
+it("forwards lifecycle artifact diagnostic labels into the worker task pool", async () => {
+  const request = input();
+  observed.run.mockResolvedValue({
+    ok: true,
+    value: {
+      kind: "lifecycle-artifact-plan",
+      plan: { entries: [], deletePlans: [] },
+      diagnostics: {},
+    },
+  });
+
+  await withSessionHistoryWorkerDatabase(request.database, (owner) =>
+    owner.readLifecycleArtifactPlan({} as never),
+  );
+
+  expect(observed.run).toHaveBeenCalledWith(
+    expect.objectContaining({ kind: "lifecycle-artifact-plan" }),
+    expect.objectContaining({
+      diagnosticOperation: "session.lifecycle.artifacts-prepare",
+    }),
+  );
+});
+
 it.each([false, true])(
   "orders cold read admission without holding consumer writes (prepared=%s)",
   async (prepared) => {
